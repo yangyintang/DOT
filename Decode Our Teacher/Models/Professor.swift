@@ -7,4 +7,9 @@
 
 import Foundation
 
-
+struct Professor {
+    let sender: String
+    let professorName: String
+    let rate: Int
+    let difficulty: Int
+}
