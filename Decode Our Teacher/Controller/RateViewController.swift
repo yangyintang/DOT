@@ -41,5 +41,16 @@ class RateViewController: UIViewController {
         difficultyLabel.text = String(format: "%.0f", sender.value)
     }
     
-    
+    @IBAction func submitPressed(_ sender: UIButton) {
+        if let commentBody = commentTextfield.text, let sender = Auth.auth().currentUser?.email, let rate = rateLabel.text, let difficulty = difficultyLabel.text, let teacherName = teacherNameTextfield.text {
+            db.collection("rate").addDocument(data: ["sender": sender, "comment" : commentBody,"rate" : rate, "difficulty" : difficulty,  "teacher name": teacherName]) { (error) in
+                if let e = error {
+                    print("issue about saving data to Firestore, \(e)")
+                }else {
+                    print("Save data successfully")
+                }
+            }
+        }
+        
+    }
 }

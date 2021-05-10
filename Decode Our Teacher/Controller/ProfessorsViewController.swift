@@ -11,8 +11,9 @@ class ProfessorViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
-    var professors:[Professor] = [Professor(sender: "123@qq.com", professorName: "Andy Lee", rate: 7, difficulty: 4), Professor(sender: "1@23.com", professorName: "Jack Wang", rate: 9, difficulty: 8)]
+    var professors:[Professor] = []
     
+    let db = Firestore.firestore()
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -20,8 +21,39 @@ class ProfessorViewController: UIViewController {
         tableView.delegate = self
         title = "Decode Our Teacher"
         navigationItem.hidesBackButton = true
-        
+        loadRate()
     }
+    
+    func loadRate() {
+        //professors = []
+        db.collection("rate").addSnapshotListener { (querySnapshot, error) in
+            self.professors = []
+            if let e = error {
+                print ("The issue retrieving data from Firestore is \(e)")
+            }else {
+                if let snapshotDocuments = querySnapshot?.documents {
+                    for doc in snapshotDocuments{
+                        //print(doc.data())
+                        let data = doc.data()
+                        if let sender = data["sender"] as? String, let teacherName = data["teacher name"] as? String,
+                           let comment = data["comment"]as? String, let rate = data["rate"] as? String, let difficulty = data["difficulty"]as? String{
+
+                            let newProfessor = Professor(sender: sender, professorName: teacherName, rate: Int(rate)!, difficulty: Int(difficulty)!, comment: comment)
+                            
+                                self.professors.append(newProfessor)
+
+                           DispatchQueue.main.async {
+                                self.tableView.reloadData()
+                           }
+                        }
+                        
+                    }
+                }
+            }
+        }
+            
+    }
+
 
     @IBAction func rateProfessor(_ sender: UIButton) {
         

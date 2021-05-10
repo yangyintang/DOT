@@ -12,4 +12,5 @@ struct Professor {
     let professorName: String
     let rate: Int
     let difficulty: Int
+    let comment: String
 }
